@@ -1,5 +1,4 @@
 # manipulate the python terminal window for visual effects
-# for the game of russian roulette
 
 # get packages
 import time
@@ -12,19 +11,43 @@ import tkinter as tk
 
 class WindowManipulation:
 
+    def attach_window(self):
+        """attach the window to the python script"""
+        # in order of preference
+        # 1 - python terminal
+        # 2 - windows powershell
+        # 3 - windows command prompt
+        # thats it for now
+
+        # get the terminal window
+        try:
+            self.app = pyautogui.getWindowsWithTitle("Python")[0]
+        except IndexError:
+            try:
+                self.app = pyautogui.getWindowsWithTitle("Windows PowerShell")[0]
+            except IndexError:
+                try:
+                    self.app = pyautogui.getWindowsWithTitle("Command Prompt")[0]
+                except IndexError:
+                    print("No terminal window found")
+                    raise Exception("No terminal window found")
+                
+        print("Window found: ", self.app.title)
+
+        return self.app
+
     def __init__(self):
         # get terminal window
-        self.app = pyautogui.getActiveWindow()
+        self.app = self.attach_window()
+        self.screen_size = pyautogui.size()
 
         self.bullets = {} # dictionary to store the bullet windows
         self.root = None # root window to hold the bullet windows
 
     def center_window(self):
         """center the window"""
-        window_size = pyautogui.size() # get the size of the screen
-
-        window_width = int(window_size.width/4)
-        window_height = int(window_size.height/4)
+        window_width = int(self.screen_size.width/4)
+        window_height = int(self.screen_size.height/4)
 
         print(window_width, window_height)
 
